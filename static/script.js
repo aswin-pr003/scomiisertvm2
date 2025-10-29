@@ -7,6 +7,8 @@ import {
   getDocs,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+fetch('/api/data', { cache: 'reload' });
+
 // === Firebase Configuration ===
 const firebaseConfig = {
   apiKey: "AIzaSyDMeX3-iFLWVy17IzqUijXwAFFroO1LjvM",
@@ -136,7 +138,7 @@ function displayMessage(text, color) {
 // === Reset UI after tap ===
 function resetInput() {
   setTimeout(() => {
-    document.getElementById("user").value = "";
+    document.getElementById("cardInput").value = "";
     document.getElementById("box").style.backgroundColor = "white";
     document.getElementById("output").innerHTML = "";
   }, 800);
