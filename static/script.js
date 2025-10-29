@@ -33,6 +33,7 @@ const permissiondenied = new Audio("res/permissiondenied.mp3");
 
 // === Handle login ===
 window.handleSubmit = function (form) {
+  form.preventDefault();
   const user = form.user.value.trim();
   const password = form.password.value.trim();
 
