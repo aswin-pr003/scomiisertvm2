@@ -41,12 +41,13 @@ signInBtn.addEventListener("click", async () => {
   try {
     await signInWithPopup(auth, provider);
   } catch (error) {
-    console.error("Login failed:", error);
+    console.log("Login failed:", error);
   }
 });
 
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
+  window.loacation.reload();
 });
 
 onAuthStateChanged(auth, (user) => {
