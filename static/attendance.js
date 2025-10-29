@@ -75,6 +75,7 @@ async function loadData() {
 }
     catch(error){ 
         alert("Unauthorized. Please sign in first.",error);
+        signOut(auth);
         window.location.href = "attendance.html"; 
     }
   
