@@ -129,7 +129,7 @@ async function saveAttendance(cardNumber) {
 
 // === Display messages ===
 function displayMessage(text, color) {
-  const box = document.getElementById("box");
+  const box = document.getElementById("outputBox");
   const output = document.getElementById("output");
   box.style.backgroundColor = color;
   output.innerHTML = text;
