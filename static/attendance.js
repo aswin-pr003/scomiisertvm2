@@ -73,7 +73,7 @@ async function loadData() {
     populateSessionFilter();
     renderTable(allData);
 }
-    catch{ 
+    catch(error){ 
         alert("Unauthorized. Please sign in first.",error);
         window.location.href = "attendance.html"; 
     }
