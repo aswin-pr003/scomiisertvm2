@@ -64,7 +64,15 @@ onAuthStateChanged(auth, (user) => {
 
 // === FIRESTORE FUNCTIONS ===
 async function loadData() {
-  const snapshot = await getDocs(collection(db, "attendanceRecords"));
+
+    user = auth.currentUser;
+    if(user){
+    const snapshot = await getDocs(collection(db, "attendanceRecords"));
+    }
+    else{ 
+        alert("Unauthorized. Please sign in first.");
+        window.location.href = "attendance.html"; 
+    }
   allData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   populateSessionFilter();
   renderTable(allData);
