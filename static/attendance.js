@@ -65,7 +65,7 @@ onAuthStateChanged(auth, (user) => {
 // === FIRESTORE FUNCTIONS ===
 async function loadData() {
 
-    user = auth.currentUser;
+    const user = auth.currentUser;
     if(user){
     const snapshot = await getDocs(collection(db, "attendanceRecords"));
     }
