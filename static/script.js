@@ -33,10 +33,7 @@ const permissiondenied = new Audio("res/permissiondenied.mp3");
 
 // === Handle login ===
 
-const form = document.getElementById("form");
-form.addEventListener("submit", handleSubmit);
-
-handleSubmit = function (event) {
+function handleSubmit(event) {
   event.preventDefault(); // ✅ Prevent page reload
 
   const user = document.getElementById("user").value.trim();
@@ -188,3 +185,7 @@ async function downloadAttendance() {
   XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
   XLSX.writeFile(workbook, "attendance.xlsx");
 }
+
+
+const form = document.getElementById("form");
+form.addEventListener("submit", handleSubmit);
