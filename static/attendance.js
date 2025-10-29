@@ -41,7 +41,7 @@ signInBtn.addEventListener("click", async () => {
   try {
     await signInWithPopup(auth, provider);
   } catch (error) {
-    console.log("Login failed:", error);
+    alert("Login failed:", error);
   }
 });
 
@@ -66,15 +66,15 @@ onAuthStateChanged(auth, (user) => {
 // === FIRESTORE FUNCTIONS ===
 async function loadData() {
 
-    const user = auth.currentUser;
-    if(user){
+   
+    try{
     const snapshot = await getDocs(collection(db, "attendanceRecords"));
     allData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     populateSessionFilter();
     renderTable(allData);
 }
-    else{ 
-        alert("Unauthorized. Please sign in first.");
+    catch{ 
+        alert("Unauthorized. Please sign in first.",error);
         window.location.href = "attendance.html"; 
     }
   
