@@ -57,6 +57,7 @@ onAuthStateChanged(auth, (user) => {
     logoutBtn.style.display = "block";
     loadData();
   } else {
+    renderTable([])
     dashboard.classList.remove("active");
     loginSection.classList.add("active");
     logoutBtn.style.display = "none";
