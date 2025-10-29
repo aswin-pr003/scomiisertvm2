@@ -139,7 +139,7 @@ function displayMessage(text, color) {
 function resetInput() {
   setTimeout(() => {
     document.getElementById("cardInput").value = "";
-    document.getElementById("box").style.backgroundColor = "white";
+    document.getElementById("outputBox").style.backgroundColor = "white";
     document.getElementById("output").innerHTML = "";
   }, 800);
 }
