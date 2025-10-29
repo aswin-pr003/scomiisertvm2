@@ -35,9 +35,14 @@ const provider = new GoogleAuthProvider();
 
 let filteredData = [];
 let currentPage = 1;
-const rowsPerPage = 100;
+const rowsPerPage = 50;
 
 let allData = [];
+
+let filterActive = false;
+let filtered = [];
+
+
 
 // === AUTH LOGIC ===
 const loginSection = document.getElementById("loginSection");
@@ -55,8 +60,9 @@ signInBtn.addEventListener("click", async () => {
 
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
-  window.location.href = "attendance.html";
+  //window.location.href = "attendance.html";
 });
+
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -66,6 +72,11 @@ onAuthStateChanged(auth, (user) => {
     logoutBtn.style.display = "block";
     loadData();
   } else {
+    // renderTable([])
+    // loginSection.classList.remove("active");
+    // dashboard.classList.add("active");
+    // logoutBtn.style.display = "block";
+    // loadData();
     dashboard.classList.remove("active");
     loginSection.classList.add("active");
     logoutBtn.style.display = "none";
@@ -88,7 +99,7 @@ async function loadData() {
     const snapshot = await getDocs(q);
     allData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     populateCDHFilter();
-    renderTable(allData);
+    //renderTable(allData);
     filteredData = allData;
     renderPaginatedTable();
 
@@ -177,28 +188,28 @@ if (tsHeader) {
 
 
 
-let currentSortOrder = "asc";
+// let sortAscending = true;
 
-document.getElementById("timestampHeader").addEventListener("click", () => {
-  const tbody = document.querySelector("#attendanceTable tbody");
-  const rows = Array.from(tbody.querySelectorAll("tr"));
+// document.getElementById("timestampHeader").addEventListener("click", () => {
+//   if (!currentData || currentData.length === 0) return;
 
-  const sortedRows = rows.sort((a, b) => {
-    const dateA = new Date(a.children[3].innerText);
-    const dateB = new Date(b.children[3].innerText);
-    return currentSortOrder === "asc" ? dateB - dateA : dateA - dateB;
-  });
+//   sortAscending = !sortAscending;
+//   const icon = document.getElementById("sortIcon");
+//   icon.textContent = sortAscending ? "⬆️" : "⬇️";
 
-  tbody.innerHTML = "";
-  sortedRows.forEach(row => tbody.appendChild(row));
+//   currentData.sort((a, b) => {
+//     const t1 = a.timestamp instanceof Date ? a.timestamp.getTime() : Date.parse(a.timestamp);
+//     const t2 = b.timestamp instanceof Date ? b.timestamp.getTime() : Date.parse(b.timestamp);
+//     return sortAscending ? t1 - t2 : t2 - t1;
+//   });
 
-  // Toggle sort order
-  currentSortOrder = currentSortOrder === "asc" ? "desc" : "asc";
-  
-  // Update header icon
-  document.getElementById("timestampHeader").innerText =
-    `Timestamp ${currentSortOrder === "asc" ? "⬆" : "⬇"}`;
-});
+//   renderTable(currentData);
+// });
+
+function toLocalISOString(date) {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, -1); // remove trailing 'Z'
+}
 
 
 window.deleteRecord = async function (id) {
@@ -215,33 +226,67 @@ async function applyFilters() {
   const start = document.getElementById("startDate").value;
   const end = document.getElementById("endDate").value;
 
-  let constraints = [];
-  if (cdh) constraints.push(where("cdh", "==", cdh));
-  if (start) constraints.push(where("timestamp", ">=", new Date(start)));
-  if (end) constraints.push(where("timestamp", "<=", new Date(end)));
+  if (!start || !end) {
+    alert("Please select both Start Date and End Date before applying filters.");
+    return [];
+  }
 
+
+
+  const startDate = toLocalISOString(new Date(start)).split('T')[0];
+  const endDate = toLocalISOString(new Date(end)).split('T')[0];
+
+  
+  // --- Build query dynamically ---
+  let constraints = [];
+
+  // always filter by timestamp range
+  constraints.push(where("date", ">=", startDate));
+  constraints.push(where("date", "<=", endDate));
+
+  // optionally filter by CDH if selected
+  if (cdh) {
+    constraints.push(where("cdh", "==", cdh));
+  }
+
+  // always order by timestamp (needed for range queries)
+  constraints.push(orderBy("timestamp", "desc"));
+
+  // now make query
   const q = query(collection(db, "attendanceRecords"), ...constraints);
   const snapshot = await getDocs(q);
+
   filteredData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  if (filteredData.length === 0) {
+    alert("No records found for selected filters.");
+  }
 
   currentPage = 1;
   renderPaginatedTable();
+  return filteredData;
 }
 
 
 
 
-document.getElementById("applyFilters").addEventListener("click", applyFilters);
 
 
+function applyFilter() {
+  // your existing filter logic
+  filtered = applyFilters();
+ 
+}
+
+function clearFilter() {
+//   document.getElementById("cdhFilter").value=none;
+   document.getElementById("startDate").value="";
+   document.getElementById("endDate").value="";
+    loadData();
+  renderPaginatedTable();
+}
 
 
-document.getElementById("clearFilters").addEventListener("click", () => {
-  document.getElementById("cdhFilter").value = "";
-  document.getElementById("startDate").value = "";
-  document.getElementById("endDate").value = "";
-  loadData();  // reload all data
-});
 
 
 function renderPaginatedTable() {
@@ -331,7 +376,26 @@ document.getElementById("nextPage").addEventListener("click", () => {
   }
 });
 
-document.getElementById("applyFilters").addEventListener("click", () => {
-  applyFilters().then(() => window.scrollTo({ top: 0, behavior: "smooth" }));
-});
 
+
+document.getElementById("filterButton").addEventListener("click", async () => {
+  const btn = document.getElementById("filterButton");
+
+  if (!filterActive) {
+    const result = await applyFilters();
+    if (!result || result.length === 0) {
+        clearFilter();
+        btn.textContent = "Apply Filter";
+        btn.classList.remove("clear");
+        filterActive = false;
+        return;} // don’t toggle if invalid filter
+    btn.textContent = "❌ Clear Filter";
+    btn.classList.add("clear");
+    filterActive = true;
+  } else {
+    clearFilter();
+    btn.textContent = "Apply Filter";
+    btn.classList.remove("clear");
+    filterActive = false;
+  }
+});

@@ -74,30 +74,26 @@ function checkCard(x) {
 async function inputBox() {
   const input = document.getElementById("cardInput");
   const val = input.value.trim();
-  const mealType = document.getElementById("mealType").value;
+  //const mealType = document.getElementById("mealType").value;
 
   if (val.length === 10) {
-    if (mealType === "none") {
+    if (selectedMealType === "none") {
       displayMessage("SELECT MEAL TYPE", "orange");
       return resetInput();
     }
 
-    if (attendance[val]) {
-      displayMessage("CARD ALREADY USED", "red");
-      return resetInput();
-    }
-
+    console.log(selectedMealType)
     // Check if already exists in Firestore
-    const alreadyUsed = await checkFirestoreDuplicate(val, mealType);
+    const alreadyUsed = await checkFirestoreDuplicate(val, selectedMealType);
     if (alreadyUsed) {
       displayMessage("CARD ALREADY USED", "red");
       return resetInput();
     }
 
-    if (checkCard(val)) {
-      attendance[val] = true;
+    else if (checkCard(val)) {
+
       displayMessage("PASS", "green");
-      await saveAttendance(val, mealType);
+      await saveAttendance(val, selectedMealType);
     } else {
       displayMessage("FAIL", "red");
     }
@@ -107,7 +103,7 @@ async function inputBox() {
 
 // === CHECK FIRESTORE DUPLICATE ===
 async function checkFirestoreDuplicate(cardNumber, mealType) {
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const today = toLocalISOString(new Date()).split("T")[0]; // YYYY-MM-DD
   const q = query(
     collection(db, "attendanceRecords"),
     where("cardNumber", "==", cardNumber),
@@ -119,12 +115,18 @@ async function checkFirestoreDuplicate(cardNumber, mealType) {
   return !querySnap.empty;
 }
 
+function toLocalISOString(date) {
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, -1); // remove trailing 'Z'
+}
+
+
 // === SAVE ATTENDANCE TO FIRESTORE ===
 async function saveAttendance(cardNumber, mealType) {
   const now = new Date();
-  const date = now.toISOString().split("T")[0];
-  const timestamp = now.toISOString();
-
+  const date = toLocalISOString(now).split("T")[0];
+  const timestamp = toLocalISOString(now);
+    
   try {
     await addDoc(collection(db, "attendanceRecords"), {
       cdh: sessionUser,
@@ -177,3 +179,11 @@ document.getElementById("attendanceBtn").addEventListener("click", () => {
 
 // === ATTACH FORM HANDLER ===
 document.getElementById("form").addEventListener("submit", handleSubmit);
+
+let selectedMealType = "none";
+
+// Add event listener
+document.getElementById("mealType").addEventListener("change", function (e) {
+  selectedMealType = e.target.value;
+  
+});

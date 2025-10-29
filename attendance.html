@@ -139,6 +139,18 @@
 #paginationControls button {
   min-width: 120px;
 }
+.filter-btn {
+  background-color: #007bff; /* blue */
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.filter-btn.clear {
+  background-color: #dc3545; /* red */
+}
 
   </style>
 </head>
@@ -168,8 +180,8 @@
       <input type="date" id="startDate" />
       <input type="date" id="endDate" />
 
-      <button class="btn primary" id="applyFilters">Apply Filters</button>
-      <button class="btn" id="clearFilters">Clear Filters</button>
+    
+      <button id="filterButton" class="filter-btn">Apply Filter</button>
       <button class="btn danger" id="deleteFilteredBtn">Delete Filtered</button>
     </div>
 
@@ -187,7 +199,7 @@
         <th>CDH</th>
         <th>Session-Type</th>
         <th>Card Number</th>
-        <th id="timestampHeader" style="cursor: pointer;">Timestamp ⬍</th>
+        <th id="timestampHeader" style="cursor: pointer;">Timestamp<span id="sortIcon">↕️</span></th>
         <th>Delete</th>
       </tr>
     </thead>
