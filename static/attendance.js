@@ -4,7 +4,11 @@ import {
   collection,
   getDocs,
   deleteDoc,
-  doc
+  doc,
+  query,
+  where,
+  orderBy,
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import {
   getAuth,
@@ -29,6 +33,10 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+let filteredData = [];
+let currentPage = 1;
+const rowsPerPage = 100;
+
 let allData = [];
 
 // === AUTH LOGIC ===
@@ -47,7 +55,7 @@ signInBtn.addEventListener("click", async () => {
 
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
-  window.location.reload();
+  window.location.href = "attendance.html";
 });
 
 onAuthStateChanged(auth, (user) => {
@@ -64,50 +72,134 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+// clear screen whenever reloaded
+window.addEventListener("beforeunload", async () => {
+   await signOut(auth);
+   renderTable([])
+   dashboard.classList.remove("active");
+    loginSection.classList.add("active");
+    logoutBtn.style.display = "none";
+});
+
 // === FIRESTORE FUNCTIONS ===
 async function loadData() {
-
-   
-    try{
-    const snapshot = await getDocs(collection(db, "attendanceRecords"));
+  try {
+    const q = query(collection(db, "attendanceRecords"), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
     allData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    populateSessionFilter();
+    populateCDHFilter();
     renderTable(allData);
-}
-    catch(error){ 
-        alert("Unauthorized. Please sign in first.",error);
-        signOut(auth);
-        window.location.href = "attendance.html"; 
-    }
-  
+    filteredData = allData;
+    renderPaginatedTable();
+
+  } catch (error) {
+    alert("Unauthorized. Please sign in first.", error);
+    signOut(auth);
+    window.location.href = "attendance.html";
+  }
 }
 
-function populateSessionFilter() {
-  const select = document.getElementById("sessionFilter");
-  select.innerHTML = `<option value="">All Sessions</option>`;
-  const sessions = [...new Set(allData.map(d => d.session))];
-  sessions.forEach(s => {
+
+function populateCDHFilter() {
+  const select = document.getElementById("cdhFilter");
+  select.innerHTML = `<option value="">All CDHs</option>`;
+  const cdhs = [...new Set(allData.map(d => d.cdh))];
+  cdhs.forEach(c => {
     const opt = document.createElement("option");
-    opt.value = s;
-    opt.textContent = s;
+    opt.value = c;
+    opt.textContent = c;
     select.appendChild(opt);
   });
 }
+
 
 function renderTable(data) {
   const tbody = document.querySelector("#attendanceTable tbody");
   tbody.innerHTML = "";
   data.forEach(row => {
+    // ensure row.timestamp is a suitable JS Date or epoch
+    const ts = row.timestamp instanceof Date ? row.timestamp.getTime()
+              : (typeof row.timestamp === "number" ? row.timestamp
+              : Date.parse(row.timestamp) || Date.now());
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${row.session}</td>
-      <td>${row.cardNumber}</td>
-      <td>${new Date(row.timestamp).toLocaleString()}</td>
+      <td>${row.cdh ?? ""}</td>
+      <td>${row.sessionType ?? ""}</td>
+      <td>${row.cardNumber ?? ""}</td>
+      <td data-ts="${ts}">${new Date(ts).toLocaleString()}</td>
       <td><button onclick="deleteRecord('${row.id}')">🗑️</button></td>
     `;
     tbody.appendChild(tr);
   });
 }
+
+let timestampSortAsc = false; // default: show newest first (toggle state)
+
+// Ensure header exists with id="timestampHeader"
+const tsHeader = document.getElementById("timestampHeader");
+if (tsHeader) {
+  tsHeader.style.cursor = "pointer";
+  // initial icon
+  tsHeader.innerText = `Timestamp ${timestampSortAsc ? "⬆" : "⬇"}`;
+
+  tsHeader.addEventListener("click", () => {
+    const tbody = document.querySelector("#attendanceTable tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    // map row -> value using data-ts from 4th cell (index 3)
+    const mapped = rows.map(tr => {
+      const cell = tr.children[3];
+      const val = cell && cell.dataset && cell.dataset.ts ? Number(cell.dataset.ts) : NaN;
+      return { tr, val };
+    });
+
+    mapped.sort((a, b) => {
+      // put NaNs at the end
+      if (isNaN(a.val) && isNaN(b.val)) return 0;
+      if (isNaN(a.val)) return 1;
+      if (isNaN(b.val)) return -1;
+
+      return timestampSortAsc ? a.val - b.val : b.val - a.val;
+    });
+
+    // reattach sorted rows
+    tbody.innerHTML = "";
+    mapped.forEach(m => tbody.appendChild(m.tr));
+
+    // toggle and update icon
+    timestampSortAsc = !timestampSortAsc;
+    tsHeader.innerText = `Timestamp ${timestampSortAsc ? "⬆" : "⬇"}`;
+  });
+}
+
+
+
+
+
+let currentSortOrder = "asc";
+
+document.getElementById("timestampHeader").addEventListener("click", () => {
+  const tbody = document.querySelector("#attendanceTable tbody");
+  const rows = Array.from(tbody.querySelectorAll("tr"));
+
+  const sortedRows = rows.sort((a, b) => {
+    const dateA = new Date(a.children[3].innerText);
+    const dateB = new Date(b.children[3].innerText);
+    return currentSortOrder === "asc" ? dateB - dateA : dateA - dateB;
+  });
+
+  tbody.innerHTML = "";
+  sortedRows.forEach(row => tbody.appendChild(row));
+
+  // Toggle sort order
+  currentSortOrder = currentSortOrder === "asc" ? "desc" : "asc";
+  
+  // Update header icon
+  document.getElementById("timestampHeader").innerText =
+    `Timestamp ${currentSortOrder === "asc" ? "⬆" : "⬇"}`;
+});
+
 
 window.deleteRecord = async function (id) {
   if (confirm("Delete this record?")) {
@@ -118,31 +210,56 @@ window.deleteRecord = async function (id) {
 };
 
 // === FILTERING ===
-function applyFilters() {
-  const session = document.getElementById("sessionFilter").value;
-  const sortOrder = document.getElementById("sortOrder").value;
+async function applyFilters() {
+  const cdh = document.getElementById("cdhFilter").value;
   const start = document.getElementById("startDate").value;
   const end = document.getElementById("endDate").value;
 
-  let filtered = [...allData];
-  if (session) filtered = filtered.filter(d => d.session === session);
-  if (start) filtered = filtered.filter(d => new Date(d.timestamp) >= new Date(start));
-  if (end) filtered = filtered.filter(d => new Date(d.timestamp) <= new Date(end));
+  let constraints = [];
+  if (cdh) constraints.push(where("cdh", "==", cdh));
+  if (start) constraints.push(where("timestamp", ">=", new Date(start)));
+  if (end) constraints.push(where("timestamp", "<=", new Date(end)));
 
-  filtered.sort((a, b) =>
-    sortOrder === "asc"
-      ? new Date(a.timestamp) - new Date(b.timestamp)
-      : new Date(b.timestamp) - new Date(a.timestamp)
-  );
+  const q = query(collection(db, "attendanceRecords"), ...constraints);
+  const snapshot = await getDocs(q);
+  filteredData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
-  renderTable(filtered);
-  return filtered;
+  currentPage = 1;
+  renderPaginatedTable();
 }
+
+
+
 
 document.getElementById("applyFilters").addEventListener("click", applyFilters);
 
+
+
+
+document.getElementById("clearFilters").addEventListener("click", () => {
+  document.getElementById("cdhFilter").value = "";
+  document.getElementById("startDate").value = "";
+  document.getElementById("endDate").value = "";
+  loadData();  // reload all data
+});
+
+
+function renderPaginatedTable() {
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const startIndex = (currentPage - 1) * rowsPerPage;
+  const pageData = filteredData.slice(startIndex, startIndex + rowsPerPage);
+
+  renderTable(pageData);
+
+  document.getElementById("paginationInfo").textContent =
+    `Showing ${startIndex + 1}–${Math.min(startIndex + rowsPerPage, filteredData.length)} of ${filteredData.length} records (Page ${currentPage}/${totalPages || 1})`;
+
+  document.getElementById("prevPage").disabled = currentPage <= 1;
+  document.getElementById("nextPage").disabled = currentPage >= totalPages;
+}
+
 // === CSV DOWNLOAD ===
-document.getElementById("downloadBtn").addEventListener("click", () => {
+document.getElementById("downloadAllBtn").addEventListener("click", () => {
   const filtered = applyFilters();
   if (filtered.length === 0) return alert("No records to download.");
   const headers = Object.keys(filtered[0]);
@@ -156,3 +273,65 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   link.download = "attendance.csv";
   link.click();
 });
+
+
+async function downloadData(data, filename) {
+  if (!data.length) return alert("No records to download.");
+  const headers = Object.keys(data[0]);
+  const csvRows = [
+    headers.join(","),
+    ...data.map(r => headers.map(h => JSON.stringify(r[h] ?? "")).join(","))
+  ];
+  const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+document.getElementById("downloadAllBtn").addEventListener("click", async () => {
+  await loadData();
+  downloadData(allData, "attendance_all.csv");
+});
+
+document.getElementById("downloadFilteredBtn").addEventListener("click", async () => {
+  const filtered = await applyFilters();
+  downloadData(filtered, "attendance_filtered.csv");
+});
+
+
+document.getElementById("deleteFilteredBtn").addEventListener("click", async () => {
+  const filtered = await applyFilters();
+  if (!filtered || !Array.isArray(filtered) || filtered.length === 0) return alert("No records found for deletion.");
+
+  const confirmMsg = `⚠️ This action will PERMANENTLY delete ${filtered.length} record(s).\nThis cannot be undone.\n\nAre you sure you want to continue?`;
+  if (!confirm(confirmMsg)) return;
+
+  for (const record of filtered) {
+    await deleteDoc(doc(db, "attendanceRecords", record.id));
+  }
+
+  alert(`${filtered.length} record(s) permanently deleted.`);
+  loadData();
+});
+
+
+document.getElementById("prevPage").addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderPaginatedTable();
+  }
+});
+
+document.getElementById("nextPage").addEventListener("click", () => {
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderPaginatedTable();
+  }
+});
+
+document.getElementById("applyFilters").addEventListener("click", () => {
+  applyFilters().then(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+});
+

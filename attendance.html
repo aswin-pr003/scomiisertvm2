@@ -83,6 +83,63 @@
       cursor: pointer;
       display: none;
     }
+
+    .controls {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 10px auto;
+  max-width: 900px;
+}
+
+.filter-box, .download-box {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+
+.btn.primary {
+  background-color: #3b0178;
+  color: white;
+}
+
+.btn.success {
+  background-color: #007e33;
+  color: white;
+}
+
+.btn.danger {
+  background-color: #cc0000;
+  color: white;
+}
+
+.btn.highlight {
+  background-color: #ff9800;
+  color: white;
+}
+
+#paginationControls {
+  margin-top: 10px;
+}
+
+#paginationControls button {
+  min-width: 120px;
+}
+
   </style>
 </head>
 
@@ -102,35 +159,47 @@
 
   <!-- === DASHBOARD VIEW === -->
   <div id="dashboard">
-    <div>
-      <select id="sessionFilter">
-        <option value="">All Sessions</option>
-      </select>
-
-      <select id="sortOrder">
-        <option value="asc">Sort by Time ↑</option>
-        <option value="desc">Sort by Time ↓</option>
+  <div class="controls">
+    <div class="filter-box">
+      <select id="cdhFilter">
+        <option value="">All CDHs</option>
       </select>
 
       <input type="date" id="startDate" />
       <input type="date" id="endDate" />
 
-      <button id="applyFilters">Apply Filters</button>
-      <button id="downloadBtn">Download CSV</button>
+      <button class="btn primary" id="applyFilters">Apply Filters</button>
+      <button class="btn" id="clearFilters">Clear Filters</button>
+      <button class="btn danger" id="deleteFilteredBtn">Delete Filtered</button>
     </div>
 
-    <table id="attendanceTable">
-      <thead>
-        <tr>
-          <th>Session</th>
-          <th>Card Number</th>
-          <th>Timestamp</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="download-box">
+      <button class="btn success" id="downloadFilteredBtn">Download Filtered</button>
+      <button class="btn highlight" id="downloadAllBtn">⬇️ Download All</button>
+    </div>
   </div>
+
+  <div id="paginationInfo" style="margin: 10px 0; font-weight: 600;"></div>
+
+  <table id="attendanceTable">
+    <thead>
+      <tr>
+        <th>CDH</th>
+        <th>Session-Type</th>
+        <th>Card Number</th>
+        <th id="timestampHeader" style="cursor: pointer;">Timestamp ⬍</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="paginationControls" style="margin-top: 10px;">
+    <button class="btn" id="prevPage">⬅ Previous</button>
+    <button class="btn" id="nextPage">Next ➡</button>
+  </div>
+</div>
+
 
   <script type="module" src="static/attendance.js"></script>
 </body>

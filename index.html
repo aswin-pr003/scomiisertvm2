@@ -24,9 +24,21 @@
     </div>
 
     <!-- Card tap box -->
-    <div id="cardBox">
+    <div id="cardBox" style="display:none;">
       <h2>ID Card Tapping</h2>
-      <input type="text" id="cardInput" placeholder="Enter card number" maxlength="10" />
+      <select id="mealType">
+        <option value="none" selected="selected">-- Select Type --</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="lunch">Lunch</option>
+        <option value="dinner">Dinner</option>
+      </select>
+      <br /><br />
+      <input
+        type="text"
+        id="cardInput"
+        placeholder="Enter card number"
+        maxlength="10"
+      />
     </div>
 
     <!-- Output box -->
@@ -36,7 +48,7 @@
     </div>
 
     <!-- Attendance button -->
-    <button id="attendanceBtn">📋 Attendance</button>
+    <button id="attendanceBtn" style="display:none;">📋 Attendance</button>
 
     <script type="module" src="static/script.js"></script>
   </body>

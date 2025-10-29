@@ -4,8 +4,8 @@ import {
   collection,
   addDoc,
   getDocs,
-  deleteDoc,
-  doc
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // === Firebase Config ===
@@ -26,7 +26,11 @@ let data = [];
 let attendance = {};
 let sessionUser = "";
 
-// === Login ===
+const success = new Audio("res/bell.mp3");
+const fail = new Audio("res/permissiondenied.mp3");
+
+
+// === LOGIN HANDLER ===
 function handleSubmit(event) {
   event.preventDefault();
   const user = document.getElementById("user").value.trim();
@@ -49,19 +53,20 @@ function GetData(user, password) {
     .catch(() => alert("Error fetching user data"));
 }
 
-// === Show card input ===
+// === SHOW CARD INPUT AFTER LOGIN ===
 function directs() {
   document.getElementById("login").style.display = "none";
   document.getElementById("cardBox").style.display = "block";
   document.getElementById("attendanceBtn").style.display = "block";
   document.getElementById("logoutBtn").style.display = "block";
+
   const input = document.getElementById("cardInput");
   input.value = "";
   input.focus();
   input.addEventListener("input", inputBox);
 }
 
-// === Card validation ===
+// === CARD VALIDATION ===
 function checkCard(x) {
   return data.includes(x);
 }
@@ -69,15 +74,30 @@ function checkCard(x) {
 async function inputBox() {
   const input = document.getElementById("cardInput");
   const val = input.value.trim();
+  const mealType = document.getElementById("mealType").value;
+
   if (val.length === 10) {
+    if (mealType === "none") {
+      displayMessage("SELECT MEAL TYPE", "orange");
+      return resetInput();
+    }
+
     if (attendance[val]) {
       displayMessage("CARD ALREADY USED", "red");
       return resetInput();
     }
+
+    // Check if already exists in Firestore
+    const alreadyUsed = await checkFirestoreDuplicate(val, mealType);
+    if (alreadyUsed) {
+      displayMessage("CARD ALREADY USED", "red");
+      return resetInput();
+    }
+
     if (checkCard(val)) {
       attendance[val] = true;
       displayMessage("PASS", "green");
-      await saveAttendance(val);
+      await saveAttendance(val, mealType);
     } else {
       displayMessage("FAIL", "red");
     }
@@ -85,26 +105,51 @@ async function inputBox() {
   }
 }
 
-// === Save Attendance ===
-async function saveAttendance(cardNumber) {
+// === CHECK FIRESTORE DUPLICATE ===
+async function checkFirestoreDuplicate(cardNumber, mealType) {
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const q = query(
+    collection(db, "attendanceRecords"),
+    where("cardNumber", "==", cardNumber),
+    where("cdh", "==", sessionUser),
+    where("sessionType", "==", mealType),
+    where("date", "==", today)
+  );
+  const querySnap = await getDocs(q);
+  return !querySnap.empty;
+}
+
+// === SAVE ATTENDANCE TO FIRESTORE ===
+async function saveAttendance(cardNumber, mealType) {
+  const now = new Date();
+  const date = now.toISOString().split("T")[0];
+  const timestamp = now.toISOString();
+
   try {
     await addDoc(collection(db, "attendanceRecords"), {
-      session: sessionUser,
+      cdh: sessionUser,
       cardNumber,
-      timestamp: new Date().toISOString(),
+      sessionType: mealType,
+      date,
+      timestamp,
     });
   } catch (err) {
     console.error("Firestore save error:", err);
   }
 }
 
+// === DISPLAY MESSAGE ===
 function displayMessage(text, color) {
+  if(color=='green'){success.play();}
+  if(color=='red'){fail.play();}
   const box = document.getElementById("outputBox");
   const output = document.getElementById("output");
   box.style.backgroundColor = color;
   output.innerHTML = text;
+  
 }
 
+// === RESET INPUT ===
 function resetInput() {
   setTimeout(() => {
     document.getElementById("cardInput").value = "";
@@ -113,21 +158,22 @@ function resetInput() {
   }, 800);
 }
 
-// === Logout ===
+// === LOGOUT ===
 document.getElementById("logoutBtn").addEventListener("click", () => {
   data = [];
   attendance = {};
   sessionUser = "";
-  document.getElementById("login").style.display = "block";
-  document.getElementById("cardBox").style.display = "none";
-  document.getElementById("attendanceBtn").style.display = "none";
-  document.getElementById("logoutBtn").style.display = "none";
+  window.location.href = "index.html";
+  // document.getElementById("login").style.display = "block";
+  // document.getElementById("cardBox").style.display = "none";
+  // document.getElementById("attendanceBtn").style.display = "none";
+  // document.getElementById("logoutBtn").style.display = "none";
 });
 
-// === Attendance Page ===
+// === ATTENDANCE PAGE ===
 document.getElementById("attendanceBtn").addEventListener("click", () => {
   window.location.href = "attendance.html";
 });
 
-// === Attach form handler ===
+// === ATTACH FORM HANDLER ===
 document.getElementById("form").addEventListener("submit", handleSubmit);
