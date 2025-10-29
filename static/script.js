@@ -32,7 +32,11 @@ const bell = new Audio("res/bell.mp3");
 const permissiondenied = new Audio("res/permissiondenied.mp3");
 
 // === Handle login ===
-window.handleSubmit = function (event) {
+
+const form = document.getElementById("form");
+form.addEventListener("submit", handleSubmit);
+
+handleSubmit = function (event) {
   event.preventDefault(); // ✅ Prevent page reload
 
   const user = document.getElementById("user").value.trim();
