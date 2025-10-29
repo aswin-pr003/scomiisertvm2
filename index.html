@@ -3,104 +3,15 @@
   <head>
     <title>SCOM IISER TVM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="static/rabbit.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-    <style>
-      body {
-        background-color: white;
-        font-family: "Segoe UI", sans-serif;
-      }
-
-      #login, #cardBox {
-        width: min(320px, 80%);
-        margin: 20px auto;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      }
-
-      #login {
-        background-color: rgb(59, 1, 120);
-        padding: 20px;
-      }
-
-      #cardBox {
-        display: none;
-        background-color: rgb(59, 1, 120);
-        padding: 30px 20px;
-      }
-
-      h1 {
-        color: rgb(59, 1, 120);
-        letter-spacing: 1px;
-        text-align: center;
-      }
-
-      h2 {
-        color: white;
-        font-weight: 500;
-        font-size: 15px;
-        margin-bottom: 15px;
-      }
-
-      input[type="text"], input[type="password"] {
-        border: none;
-        padding: 8px 10px;
-        border-radius: 6px;
-        text-align: center;
-        width: 80%;
-      }
-
-      input[type="submit"] {
-        background-color: white;
-        color: rgb(59, 1, 120);
-        font-weight: bold;
-        border: none;
-        padding: 6px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 10px;
-      }
-
-      input[type="submit"]:hover {
-        background-color: rgb(230, 230, 250);
-      }
-
-      #outputBox {
-        height: 110px;
-        width: min(290px, 70%);
-        background-color: white;
-        margin: 30px auto;
-        text-align: center;
-        border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-      }
-
-      #downloadBtn {
-        display: none;
-        margin: 20px auto;
-        padding: 10px 25px;
-        background-color: rgb(59, 1, 120);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: 0.3s;
-        
-      }
-
-      #downloadBtn:hover {
-        background-color: rgb(83, 33, 150);
-        transform: scale(1.05);
-      }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link rel="stylesheet" href="static/style.css" />
   </head>
 
   <body>
     <h1>SCOM IISER TVM</h1>
+
+    <!-- Logout button -->
+    <button id="logoutBtn" style="display:none;">Logout</button>
 
     <!-- Login box -->
     <div id="login">
@@ -124,7 +35,8 @@
       <b><p id="output" style="font-size: 25px"></p></b>
     </div>
 
-    <button id="downloadBtn">⬇️ Download Attendance</button>
+    <!-- Attendance button -->
+    <button id="attendanceBtn">📋 Attendance</button>
 
     <script type="module" src="static/script.js"></script>
   </body>

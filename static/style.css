@@ -1,0 +1,83 @@
+body {
+  background-color: white;
+  font-family: "Segoe UI", sans-serif;
+  text-align: center;
+}
+
+h1 {
+  color: rgb(59, 1, 120);
+}
+
+#logoutBtn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  padding: 8px 14px;
+  background-color: rgb(59, 1, 120);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: none;
+}
+
+#login, #cardBox {
+  width: min(320px, 80%);
+  margin: 20px auto;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#login {
+  background-color: rgb(59, 1, 120);
+  padding: 20px;
+}
+
+#cardBox {
+  display: none;
+  background-color: rgb(59, 1, 120);
+  padding: 30px 20px;
+}
+
+input[type="text"], input[type="password"] {
+  border: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  text-align: center;
+  width: 80%;
+}
+
+input[type="submit"] {
+  background-color: white;
+  color: rgb(59, 1, 120);
+  font-weight: bold;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#outputBox {
+  height: 110px;
+  width: min(290px, 70%);
+  background-color: white;
+  margin: 30px auto;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+#attendanceBtn {
+  display: none;
+  margin: 20px auto;
+  padding: 10px 25px;
+  background-color: rgb(59, 1, 120);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: rgb(59, 1, 120);
+      color: white;
+    }
+
+    button, select, input {
+      margin: 5px;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Attendance Dashboard</h1>
+  <button id="backBtn">← Back</button>
+
+  <div>
+    <select id="sessionFilter">
+      <option value="">All Sessions</option>
+    </select>
+
+    <select id="sortOrder">
+      <option value="asc">Sort by Time ↑</option>
+      <option value="desc">Sort by Time ↓</option>
+    </select>
+
+    <input type="date" id="startDate" />
+    <input type="date" id="endDate" />
+
+    <button id="applyFilters">Apply Filters</button>
+    <button id="downloadBtn">Download CSV</button>
+  </div>
+
+  <table id="attendanceTable">
+    <thead>
+      <tr>
+        <th>Session</th>
+        <th>Card Number</th>
+        <th>Timestamp</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module" src="static/attendance.js"></script>
+</body>
+</html>
