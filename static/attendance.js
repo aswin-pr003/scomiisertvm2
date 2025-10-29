@@ -52,12 +52,12 @@ logoutBtn.addEventListener("click", async () => {
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    renderTable([])
     loginSection.classList.remove("active");
     dashboard.classList.add("active");
     logoutBtn.style.display = "block";
     loadData();
   } else {
-    renderTable([])
     dashboard.classList.remove("active");
     loginSection.classList.add("active");
     logoutBtn.style.display = "none";
