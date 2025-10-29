@@ -68,14 +68,15 @@ async function loadData() {
     const user = auth.currentUser;
     if(user){
     const snapshot = await getDocs(collection(db, "attendanceRecords"));
-    }
+    allData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    populateSessionFilter();
+    renderTable(allData);
+}
     else{ 
         alert("Unauthorized. Please sign in first.");
         window.location.href = "attendance.html"; 
     }
-  allData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-  populateSessionFilter();
-  renderTable(allData);
+  
 }
 
 function populateSessionFilter() {
