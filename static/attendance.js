@@ -1,12 +1,20 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import {
   getFirestore,
   collection,
   getDocs,
   deleteDoc,
   doc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
+// === FIREBASE CONFIG ===
 const firebaseConfig = {
   apiKey: "AIzaSyDMeX3-iFLWVy17IzqUijXwAFFroO1LjvM",
   authDomain: "scom-1e5e6.firebaseapp.com",
@@ -15,11 +23,46 @@ const firebaseConfig = {
   messagingSenderId: "670586958567",
   appId: "1:670586958567:web:6b264ba16f44137ebda842",
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
 let allData = [];
 
+// === AUTH LOGIC ===
+const loginSection = document.getElementById("loginSection");
+const dashboard = document.getElementById("dashboard");
+const logoutBtn = document.getElementById("logoutBtn");
+const signInBtn = document.getElementById("googleSignInBtn");
+
+signInBtn.addEventListener("click", async () => {
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (error) {
+    console.error("Login failed:", error);
+  }
+});
+
+logoutBtn.addEventListener("click", async () => {
+  await signOut(auth);
+});
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loginSection.classList.remove("active");
+    dashboard.classList.add("active");
+    logoutBtn.style.display = "block";
+    loadData();
+  } else {
+    dashboard.classList.remove("active");
+    loginSection.classList.add("active");
+    logoutBtn.style.display = "none";
+  }
+});
+
+// === FIRESTORE FUNCTIONS ===
 async function loadData() {
   const snapshot = await getDocs(collection(db, "attendanceRecords"));
   allData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -29,6 +72,7 @@ async function loadData() {
 
 function populateSessionFilter() {
   const select = document.getElementById("sessionFilter");
+  select.innerHTML = `<option value="">All Sessions</option>`;
   const sessions = [...new Set(allData.map(d => d.session))];
   sessions.forEach(s => {
     const opt = document.createElement("option");
@@ -61,7 +105,7 @@ window.deleteRecord = async function (id) {
   }
 };
 
-// === Filter logic ===
+// === FILTERING ===
 function applyFilters() {
   const session = document.getElementById("sessionFilter").value;
   const sortOrder = document.getElementById("sortOrder").value;
@@ -84,9 +128,8 @@ function applyFilters() {
 }
 
 document.getElementById("applyFilters").addEventListener("click", applyFilters);
-document.getElementById("backBtn").addEventListener("click", () => window.location.href = "index.html");
 
-// === CSV download ===
+// === CSV DOWNLOAD ===
 document.getElementById("downloadBtn").addEventListener("click", () => {
   const filtered = applyFilters();
   if (filtered.length === 0) return alert("No records to download.");
@@ -101,5 +144,3 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   link.download = "attendance.csv";
   link.click();
 });
-
-loadData();

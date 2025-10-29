@@ -4,17 +4,53 @@
   <title>Attendance Records</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
       margin: 20px;
       text-align: center;
+      background-color: #f9f9f9;
+    }
+
+    #loginSection, #dashboard {
+      display: none;
+    }
+
+    #loginSection.active, #dashboard.active {
+      display: block;
+    }
+
+    #googleSignInBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    #googleSignInBtn:hover {
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
+
+    #googleSignInBtn img {
+      width: 24px;
+      height: 24px;
     }
 
     table {
       margin: 20px auto;
       border-collapse: collapse;
       width: 90%;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     th, td {
@@ -32,41 +68,69 @@
       margin: 5px;
       padding: 6px 12px;
       border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    #logoutBtn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      padding: 8px 14px;
+      background-color: rgb(59, 1, 120);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
     }
   </style>
 </head>
+
 <body>
   <h1>Attendance Dashboard</h1>
-  <button id="backBtn">← Back</button>
 
-  <div>
-    <select id="sessionFilter">
-      <option value="">All Sessions</option>
-    </select>
+  <button id="logoutBtn">Logout</button>
 
-    <select id="sortOrder">
-      <option value="asc">Sort by Time ↑</option>
-      <option value="desc">Sort by Time ↓</option>
-    </select>
-
-    <input type="date" id="startDate" />
-    <input type="date" id="endDate" />
-
-    <button id="applyFilters">Apply Filters</button>
-    <button id="downloadBtn">Download CSV</button>
+  <!-- === LOGIN VIEW === -->
+  <div id="loginSection" class="active">
+    <h3>Sign in to view attendance records</h3>
+    <button id="googleSignInBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+      Sign in with Google
+    </button>
   </div>
 
-  <table id="attendanceTable">
-    <thead>
-      <tr>
-        <th>Session</th>
-        <th>Card Number</th>
-        <th>Timestamp</th>
-        <th>Delete</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- === DASHBOARD VIEW === -->
+  <div id="dashboard">
+    <div>
+      <select id="sessionFilter">
+        <option value="">All Sessions</option>
+      </select>
+
+      <select id="sortOrder">
+        <option value="asc">Sort by Time ↑</option>
+        <option value="desc">Sort by Time ↓</option>
+      </select>
+
+      <input type="date" id="startDate" />
+      <input type="date" id="endDate" />
+
+      <button id="applyFilters">Apply Filters</button>
+      <button id="downloadBtn">Download CSV</button>
+    </div>
+
+    <table id="attendanceTable">
+      <thead>
+        <tr>
+          <th>Session</th>
+          <th>Card Number</th>
+          <th>Timestamp</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <script type="module" src="static/attendance.js"></script>
 </body>
