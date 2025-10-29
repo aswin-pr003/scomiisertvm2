@@ -7,7 +7,6 @@ import {
   getDocs,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-fetch('/api/data', { cache: 'reload' });
 
 // === Firebase Configuration ===
 const firebaseConfig = {
@@ -50,7 +49,7 @@ function handleSubmit(event) {
 };
 // === Fetch and decrypt card data ===
 function GetData(user, password) {
-  fetch("res/data.json")
+  fetch("res/data.json", { cache: 'reload' })
     .then((res) => res.text())
     .then((responseData) => {
       const decrypted_data = decrypt(responseData, password);
