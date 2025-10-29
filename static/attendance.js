@@ -47,7 +47,7 @@ signInBtn.addEventListener("click", async () => {
 
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
-  window.loacation.reload();
+  window.location.reload();
 });
 
 onAuthStateChanged(auth, (user) => {
