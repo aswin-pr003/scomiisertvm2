@@ -4,16 +4,15 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs
+  getDocs,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // === Firebase Configuration ===
-// Replace with YOUR Firebase web config
 const firebaseConfig = {
   apiKey: "AIzaSyDMeX3-iFLWVy17IzqUijXwAFFroO1LjvM",
   authDomain: "scom-1e5e6.firebaseapp.com",
   projectId: "scom-1e5e6",
-  storageBucket: "scom-1e5e6.firebasestorage.app",
+  storageBucket: "scom-1e5e6.appspot.com",
   messagingSenderId: "670586958567",
   appId: "1:670586958567:web:6b264ba16f44137ebda842",
   measurementId: "G-BVZPMP1G8B",
@@ -33,7 +32,7 @@ const bell = new Audio("res/bell.mp3");
 const permissiondenied = new Audio("res/permissiondenied.mp3");
 
 // === Handle login ===
-function handleSubmit(form) {
+window.handleSubmit = function (form) {
   const user = form.user.value.trim();
   const password = form.password.value.trim();
 
@@ -43,7 +42,7 @@ function handleSubmit(form) {
   }
 
   GetData(user, password);
-}
+};
 
 // === Fetch and decrypt card data ===
 function GetData(user, password) {
@@ -143,19 +142,26 @@ function resetInput() {
 
 // === Prepare UI after login ===
 function directs() {
-  document.querySelector("h2").innerHTML = "Id Card Tapping";
-  document.getElementById("pass").setAttribute("type", "hidden");
-  document.getElementById("user").value = "";
-  document.getElementById("user").placeholder = "cardnumber";
-  document.getElementById("user").addEventListener("input", inputBox);
-  document.getElementById("user").focus();
-  document.getElementById("sub").disabled = true;
-  document.getElementById("sub").setAttribute("type", "hidden");
-  document.querySelector("div").setAttribute("style", "height:190px;");
+  const header = document.getElementById("formHeader");
+  const passInput = document.getElementById("pass");
+  const userInput = document.getElementById("user");
+  const submitBtn = document.getElementById("sub");
+  const downloadBtn = document.getElementById("downloadBtn");
 
-  // Show download button
-  document.getElementById("downloadBtn").style.display = "block";
-  document.getElementById("downloadBtn").addEventListener("click", downloadAttendance);
+  header.innerHTML = "ID Card Tapping";
+  passInput.style.display = "none";
+  submitBtn.style.display = "none";
+
+  // Change user input to card number mode
+  userInput.value = "";
+  userInput.placeholder = "Card Number";
+  userInput.removeEventListener("input", inputBox); // ensure clean
+  userInput.addEventListener("input", inputBox);
+  userInput.focus();
+
+  // Show download button only now
+  downloadBtn.style.display = "block";
+  downloadBtn.addEventListener("click", downloadAttendance);
 }
 
 // === Download attendance as Excel ===
@@ -167,10 +173,13 @@ async function downloadAttendance() {
     rows.push(doc.data());
   });
 
+  if (rows.length === 0) {
+    alert("No attendance records found!");
+    return;
+  }
+
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
   XLSX.writeFile(workbook, "attendance.xlsx");
 }
-
-window.handleSubmit = handleSubmit;
