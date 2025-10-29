@@ -4,6 +4,7 @@
     <title>SCOM IISER TVM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="static/rabbit.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
       body {
@@ -11,45 +12,44 @@
         font-family: "Segoe UI", sans-serif;
       }
 
-      #login {
-        height: 250px;
-        width: min(300px, 70%);
-        background-color: rgb(59, 1, 120);
-        margin: auto;
-        transform: scale(1.3);
+      #login, #cardBox {
+        width: min(320px, 80%);
+        margin: 20px auto;
         border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         text-align: center;
-        padding-top: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       }
 
-      #box {
-        height: 110px;
-        width: min(250px, 70%);
-        background-color: white;
-        margin: auto;
-        transform: scale(1.3);
-        text-align: center;
-        border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      #login {
+        background-color: rgb(59, 1, 120);
+        padding: 20px;
+      }
+
+      #cardBox {
+        display: none;
+        background-color: rgb(59, 1, 120);
+        padding: 30px 20px;
       }
 
       h1 {
         color: rgb(59, 1, 120);
         letter-spacing: 1px;
+        text-align: center;
       }
 
       h2 {
         color: white;
         font-weight: 500;
+        font-size: 15px;
+        margin-bottom: 15px;
       }
 
-      input[type="text"],
-      input[type="password"] {
+      input[type="text"], input[type="password"] {
         border: none;
         padding: 8px 10px;
         border-radius: 6px;
         text-align: center;
+        width: 80%;
       }
 
       input[type="submit"] {
@@ -60,16 +60,26 @@
         padding: 6px 16px;
         border-radius: 6px;
         cursor: pointer;
+        margin-top: 10px;
       }
 
       input[type="submit"]:hover {
         background-color: rgb(230, 230, 250);
       }
 
-      /* ✅ Download button styling */
+      #outputBox {
+        height: 110px;
+        width: min(250px, 70%);
+        background-color: white;
+        margin: 30px auto;
+        text-align: center;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+
       #downloadBtn {
         display: none;
-        margin: 25px auto;
+        margin: 20px auto;
         padding: 10px 25px;
         background-color: rgb(59, 1, 120);
         color: white;
@@ -79,6 +89,7 @@
         font-weight: 500;
         cursor: pointer;
         transition: 0.3s;
+        display: block;
       }
 
       #downloadBtn:hover {
@@ -89,46 +100,32 @@
   </head>
 
   <body>
-    <br /><br /><br /><br /><br />
-    <h1 align="center">SCOM IISER TVM</h1>
-    <br /><br /><br /><br />
+    <h1>SCOM IISER TVM</h1>
+
+    <!-- Login box -->
     <div id="login">
-      <h2 id="formHeader" style="font-size: 15px">LOGIN</h2>
+      <h2>LOGIN</h2>
       <form id="form">
-        <input
-          type="text"
-          name="user"
-          id="user"
-          placeholder="user"
-          autofocus
-          size="22"
-        />
-        <br /><br />
-        <input
-          type="password"
-          id="pass"
-          name="password"
-          placeholder="Password"
-          size="22"
-        />
-        <br /><br />
-        <input type="submit" id="sub" value="submit" />
+        <input type="text" id="user" placeholder="User" required /><br /><br />
+        <input type="password" id="pass" placeholder="Password" required /><br /><br />
+        <input type="submit" value="Submit" />
       </form>
     </div>
 
-    <br /><br /><br /><br /><br />
-    <div id="box">
+    <!-- Card tap box -->
+    <div id="cardBox">
+      <h2>ID Card Tapping</h2>
+      <input type="text" id="cardInput" placeholder="Enter card number" maxlength="10" />
+    </div>
+
+    <!-- Output box -->
+    <div id="outputBox">
       <br />
       <b><p id="output" style="font-size: 25px"></p></b>
     </div>
 
-    <!-- ✅ Download button -->
     <button id="downloadBtn">⬇️ Download Attendance</button>
 
-    <!-- Excel export library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-    <!-- Main logic -->
     <script type="module" src="static/script.js"></script>
   </body>
 </html>

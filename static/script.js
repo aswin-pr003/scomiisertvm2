@@ -83,7 +83,7 @@ function checkCard(x) {
 
 // === Handle card input ===
 window.inputBox = async function () {
-  const textinput = document.getElementById("user");
+  const textinput = document.getElementById("cardInput");
   const val = textinput.value.trim();
   const len = val.length;
 
@@ -144,27 +144,23 @@ function resetInput() {
 
 // === Prepare UI after login ===
 function directs() {
-  const header = document.getElementById("formHeader");
-  const passInput = document.getElementById("pass");
-  const userInput = document.getElementById("user");
-  const submitBtn = document.getElementById("sub");
-  const downloadBtn = document.getElementById("downloadBtn");
+  // Hide login
+  document.getElementById("login").style.display = "none";
 
-  header.innerHTML = "ID Card Tapping";
-  passInput.style.display = "none";
-  submitBtn.style.display = "none";
+  // Show card box
+  document.getElementById("cardBox").style.display = "block";
 
-  // Change user input to card number mode
-  userInput.value = "";
-  userInput.placeholder = "Card Number";
-  userInput.removeEventListener("input", inputBox); // ensure clean
-  userInput.addEventListener("input", inputBox);
-  userInput.focus();
+  // Focus on card input
+  const cardInput = document.getElementById("cardInput");
+  cardInput.value = "";
+  cardInput.focus();
+  cardInput.addEventListener("input", inputBox);
 
-  // Show download button only now
-  downloadBtn.style.display = "block";
-  downloadBtn.addEventListener("click", downloadAttendance);
+  // Show download button
+  document.getElementById("downloadBtn").style.display = "block";
+  document.getElementById("downloadBtn").addEventListener("click", downloadAttendance);
 }
+
 
 // === Download attendance as Excel ===
 async function downloadAttendance() {
