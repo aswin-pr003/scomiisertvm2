@@ -32,10 +32,11 @@ const bell = new Audio("res/bell.mp3");
 const permissiondenied = new Audio("res/permissiondenied.mp3");
 
 // === Handle login ===
-window.handleSubmit = function (form) {
-  form.preventDefault();
-  const user = form.user.value.trim();
-  const password = form.password.value.trim();
+window.handleSubmit = function (event) {
+  event.preventDefault(); // ✅ Prevent page reload
+
+  const user = document.getElementById("user").value.trim();
+  const password = document.getElementById("pass").value.trim();
 
   if (!user || !password) {
     alert("User and password can't be empty");
@@ -44,7 +45,6 @@ window.handleSubmit = function (form) {
 
   GetData(user, password);
 };
-
 // === Fetch and decrypt card data ===
 function GetData(user, password) {
   fetch("res/data.json")
