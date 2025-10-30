@@ -223,6 +223,7 @@ window.deleteRecord = async function (id) {
 // === FILTERING ===
 async function applyFilters() {
   const cdh = document.getElementById("cdhFilter").value;
+  const sessionType = document.getElementById("sessionType").value;
   const start = document.getElementById("startDate").value;
   const end = document.getElementById("endDate").value;
 
@@ -244,9 +245,12 @@ async function applyFilters() {
   constraints.push(where("date", ">=", startDate));
   constraints.push(where("date", "<=", endDate));
 
-  // optionally filter by CDH if selected
+  // optionally filter by CDH and SessionType if selected
   if (cdh) {
     constraints.push(where("cdh", "==", cdh));
+  }
+  if (sessionType){
+    constraints.push(where("sessionType", "==", sessionType));
   }
 
   // always order by timestamp (needed for range queries)
@@ -282,6 +286,8 @@ function clearFilter() {
 //   document.getElementById("cdhFilter").value=none;
    document.getElementById("startDate").value="";
    document.getElementById("endDate").value="";
+   document.getElementById("sessionType").selectedIndex=0;
+
     loadData();
   renderPaginatedTable();
 }
