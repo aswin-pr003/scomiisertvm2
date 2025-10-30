@@ -310,20 +310,20 @@ function renderPaginatedTable() {
 }
 
 // === CSV DOWNLOAD ===
-document.getElementById("downloadAllBtn").addEventListener("click", () => {
-  const filtered = applyFilters();
-  if (filtered.length === 0) return alert("No records to download.");
-  const headers = Object.keys(filtered[0]);
-  const csvRows = [
-    headers.join(","),
-    ...filtered.map(r => headers.map(h => JSON.stringify(r[h] ?? "")).join(","))
-  ];
-  const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "attendance.csv";
-  link.click();
-});
+// document.getElementById("downloadAllBtn").addEventListener("click", () => {
+//   const filtered = applyFilters();
+//   if (filtered.length === 0) return alert("No records to download.");
+//   const headers = Object.keys(filtered[0]);
+//   const csvRows = [
+//     headers.join(","),
+//     ...filtered.map(r => headers.map(h => JSON.stringify(r[h] ?? "")).join(","))
+//   ];
+//   const blob = new Blob([csvRows.join("\n")], { type: "text/csv" });
+//   const link = document.createElement("a");
+//   link.href = URL.createObjectURL(blob);
+//   link.download = "attendance.csv";
+//   link.click();
+// });
 
 
 async function downloadData(data, filename) {
