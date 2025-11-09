@@ -10,11 +10,10 @@
   <body>
     <h1>SCOM IISER TVM</h1>
 
-    <!-- Logout button -->
     <button id="logoutBtn" style="display:none;">Logout</button>
 
     <!-- Login box -->
-    <div id="login">
+    <div id="login" class="center-box">
       <h2>LOGIN</h2>
       <form id="form">
         <input type="text" id="user" placeholder="User" required /><br /><br />
@@ -24,10 +23,10 @@
     </div>
 
     <!-- Card tap box -->
-    <div id="cardBox" style="display:none;">
+    <div id="cardBox" class="center-box" style="display:none;">
       <h2>ID Card Tapping</h2>
       <select id="mealType">
-        <option value="none" selected="selected" >-- Select Type --</option>
+        <option value="none" selected>-- Select Type --</option>
         <option value="breakfast">Breakfast</option>
         <option value="lunch">Lunch</option>
         <option value="dinner">Dinner</option>
@@ -41,15 +40,12 @@
       />
     </div>
 
-    <!-- Output box -->
     <div id="outputBox">
-      <br />
       <b><p id="output" style="font-size: 25px"></p></b>
     </div>
-
-    <!-- Attendance button -->
+    <div>
     <button id="attendanceBtn" style="display:none;">📋 Attendance</button>
-
+    </div>
     <script type="module" src="static/script.js"></script>
   </body>
 </html>

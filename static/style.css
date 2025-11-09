@@ -1,83 +1,93 @@
+/* General layout */
 body {
-  background-color: white;
-  font-family: "Segoe UI", sans-serif;
+  font-family: Arial, sans-serif;
   text-align: center;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
 
+/* Header */
 h1 {
-  color: rgb(59, 1, 120);
+  margin-top: 40px;
+  font-size: 2em;
+  color: #333;
 }
 
-#logoutBtn {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  padding: 8px 14px;
-  background-color: rgb(59, 1, 120);
+/* Centered boxes (login & card tap) */
+.center-box {
+  background: white;
+  padding: 25px;
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 350px;
+}
+
+/* Input styling */
+input, select {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1em;
+}
+
+/* Buttons */
+button, input[type="submit"] {
+  background-color: #4CAF50;
   color: white;
   border: none;
+  padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
-  display: none;
+  font-size: 1em;
 }
 
-#login, #cardBox {
-  width: min(320px, 80%);
-  margin: 20px auto;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+button:hover, input[type="submit"]:hover {
+  background-color: #45a049;
 }
 
-#login {
-  background-color: rgb(59, 1, 120);
-  padding: 20px;
-}
-
-#cardBox {
-  display: none;
-  background-color: rgb(59, 1, 120);
-  padding: 30px 20px;
-}
-
-input[type="text"], input[type="password"] {
-  border: none;
-  padding: 8px 10px;
-  border-radius: 6px;
-  text-align: center;
-  width: 80%;
-}
-
-input[type="submit"] {
+/* Output box */
+#outputBox {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
   background-color: white;
-  color: rgb(59, 1, 120);
-  font-weight: bold;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#attendanceBt {
+    margin-top: 180;
 }
 
 #outputBox {
-  height: 110px;
-  width: min(290px, 70%);
-  background-color: white;
-  margin: 30px auto;
-  text-align: center;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  margin-bottom: 15px;
 }
 
 #attendanceBtn {
-  display: none;
-  margin: 20px auto;
-  padding: 10px 25px;
-  background-color: rgb(59, 1, 120);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Responsive behavior */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.7em;
+  }
+
+  .center-box {
+    width: 90%;
+    padding: 20px;
+  }
+
+  input, select {
+    font-size: 0.95em;
+  }
 }

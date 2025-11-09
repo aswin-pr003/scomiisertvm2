@@ -50,6 +50,7 @@ const dashboard = document.getElementById("dashboard");
 const logoutBtn = document.getElementById("logoutBtn");
 const signInBtn = document.getElementById("googleSignInBtn");
 
+
 signInBtn.addEventListener("click", async () => {
   try {
     await signInWithPopup(auth, provider);
@@ -60,16 +61,18 @@ signInBtn.addEventListener("click", async () => {
 
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
-  //window.location.href = "attendance.html";
+  window.location.href = "attendance.html";
 });
 
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    renderTable([])
+    loginSection.style.display ="none";
     loginSection.classList.remove("active");
     dashboard.classList.add("active");
     logoutBtn.style.display = "block";
+    signInBtn.style.display = "none"; // ✅ hide Google button
+    
     loadData();
   } else {
     // renderTable([])
@@ -80,6 +83,7 @@ onAuthStateChanged(auth, (user) => {
     dashboard.classList.remove("active");
     loginSection.classList.add("active");
     logoutBtn.style.display = "none";
+    signInBtn.style.display = "inline-flex"; // ✅ show again when logged out
   }
 });
 
@@ -87,6 +91,7 @@ onAuthStateChanged(auth, (user) => {
 window.addEventListener("beforeunload", async () => {
    await signOut(auth);
    renderTable([])
+   loginSection.style.display = "flex";
    dashboard.classList.remove("active");
     loginSection.classList.add("active");
     logoutBtn.style.display = "none";
