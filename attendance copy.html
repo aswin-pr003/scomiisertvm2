@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance Records</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+ <link rel="stylesheet" href="static/attendance.css" />
+  <!-- <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 20px;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+
+    #loginSection, #dashboard {
+      display: none;
+    }
+
+    #loginSection.active, #dashboard.active {
+      display: block;
+    }
+
+    #googleSignInBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    #googleSignInBtn:hover {
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
+
+    #googleSignInBtn img {
+      width: 24px;
+      height: 24px;
+    }
+
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: rgb(59, 1, 120);
+      color: white;
+    }
+
+    button, select, input {
+      margin: 5px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    #logoutBtn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      padding: 8px 14px;
+      background-color: rgb(59, 1, 120);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .controls {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 10px auto;
+  max-width: 900px;
+}
+
+.filter-box, .download-box {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+
+.btn.primary {
+  background-color: #3b0178;
+  color: white;
+}
+
+.btn.success {
+  background-color: #007e33;
+  color: white;
+}
+
+.btn.danger {
+  background-color: #cc0000;
+  color: white;
+}
+
+.btn.highlight {
+  background-color: #ff9800;
+  color: white;
+}
+
+#paginationControls {
+  margin-top: 10px;
+}
+
+#paginationControls button {
+  min-width: 120px;
+}
+.filter-btn {
+  background-color: #007bff; /* blue */
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.filter-btn.clear {
+  background-color: #dc3545; /* red */
+}
+
+  </style> -->
+</head>
+
+<body>
+  <h1>Attendance Dashboard</h1>
+
+  <button id="logoutBtn">Logout</button>
+
+  <!-- === LOGIN VIEW === -->
+  <div id="loginSection" class="active">
+    <h3>Sign in to view attendance records</h3>
+    <button id="googleSignInBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
+      Sign in with Google
+    </button>
+  </div>
+
+  <!-- === DASHBOARD VIEW === -->
+  <div id="dashboard">
+  <div class="controls">
+    <div class="filter-box">
+      <select id="cdhFilter">
+        <option value="">All CDHs</option>
+      </select>
+      <select id="sessionType">
+        <option value="">All Session-Type</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="lunch">Lunch</option>
+        <option value="dinner">Dinner</option>
+      </select>
+
+      <input type="date" id="startDate" />
+      <input type="date" id="endDate" />
+
+    
+      <button id="filterButton" class="filter-btn">Apply Filter</button>
+      <button class="btn danger" id="deleteFilteredBtn">Delete Filtered</button>
+    </div>
+
+    <div class="download-box">
+      <button class="btn success" id="downloadFilteredBtn">Download Filtered</button>
+      <button class="btn highlight" id="downloadAllBtn">⬇️ Download All</button>
+    </div>
+  </div>
+
+  <div id="paginationInfo" style="margin: 10px 0; font-weight: 600;"></div>
+  <div class="table-container">
+  <table id="attendanceTable">
+    <thead>
+      <tr>
+        <th>CDH</th>
+        <th>Session-Type</th>
+        <th>Card Number</th>
+        <th id="timestampHeader" style="cursor: pointer;">Timestamp<span id="sortIcon">↕️</span></th>
+        <th>Delete</th>
+      </tr>
+  </div>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="paginationControls" style="margin-top: 10px;">
+    <button class="btn" id="prevPage">⬅ Previous</button>
+    <button class="btn" id="nextPage">Next ➡</button>
+  </div>
+</div>
+
+
+  <script type="module" src="static/attendance.js"></script>
+</body>
+</html>

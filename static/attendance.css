@@ -1,0 +1,339 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f5f9f6;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+/* ===== LOGIN SECTION ===== */
+#loginSection {
+display: none;
+height: 100vh;
+display: flex;
+justify-content: center;
+align-items: flex-start;  /* keeps content slightly higher */
+background: #e8f5e9;
+padding-top: 120px;       /* controls how far down it sits */
+
+width: 300px;            /* 👈 fixed width */
+  margin: 0 auto;          /* centers it horizontally */
+  border-radius: 12px;
+}
+
+#loginSection.active {
+  display: flex;
+}
+
+.login-box {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+}
+
+#googleSignInBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#googleSignInBtn img {
+  width: 22px;
+  height: 22px;
+}
+
+#googleSignInBtn:hover {
+  background-color: #f1f1f1;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* ===== DASHBOARD ===== */
+#dashboard {
+  display: none;
+  padding: 10px;
+}
+
+#dashboard.active {
+  display: block;
+}
+
+h1 {
+  margin-top: 60px;
+  color: #2e7d32;
+}
+
+/* ===== LOGOUT BUTTON ===== */
+#logoutBtn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  padding: 8px 14px;
+  background-color: #388e3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: none;
+  z-index: 1000;
+}
+
+#logoutBtn:hover {
+  background-color: #2e7d32;
+}
+
+/* ===== CONTROLS ===== */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 10px auto;
+  max-width: 900px;
+}
+
+.filter-box,
+.download-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.btn.primary {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn.success {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.btn.danger {
+  background-color: #c62828;
+  color: white;
+}
+
+.btn.highlight {
+  background-color: #ffb300;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* ===== TABLE ===== */
+.table-container {
+  width: 95%;
+  margin: 10px auto;
+  overflow-x: auto;
+}
+
+#attendanceTable {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 700px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#attendanceTable th {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+#attendanceTable td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+#attendanceTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.page-info {
+  font-weight: 600;
+  color: #2e7d32;
+  margin: 5px 0;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  #logoutBtn {
+    position: static;
+    margin: 10px auto;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #attendanceTable {
+    min-width: 600px;
+  }
+}
+
+/* ===== DASHBOARD ===== */
+#dashboard {
+  display: none;
+  padding: 10px;
+  text-align: center;
+}
+
+#dashboard.active {
+  display: block;
+}
+
+h1 {
+  margin-top: 20px; /* reduced from 60px */
+  color: #2e7d32;
+  font-size: 1.8rem;
+  text-align: center;
+  width: 100%;
+  word-wrap: break-word;
+}
+
+/* ===== LOGOUT BUTTON ===== */
+#logoutBtn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  padding: 8px 14px;
+  background-color: #388e3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: none;
+  z-index: 1000;
+}
+
+/* ===== CONTROLS ===== */
+.controls {
+  display: flex;
+  justify-content: center; /* centered on large screens */
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px auto;
+  max-width: 900px;
+}
+
+.filter-box,
+.download-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center; /* center contents */
+  gap: 8px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 10px 16px; /* slightly larger for mobile comfort */
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+  font-size: 0.95rem;
+  min-width: 120px; /* consistent width for visual balance */
+}
+
+/* ===== TABLE ===== */
+.table-container {
+  width: 95%;
+  margin: 20px auto; /* more breathing space */
+  overflow-x: auto;
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 40px; /* ensure no clipping at bottom */
+  }
+
+  #logoutBtn {
+    position: relative;
+    display: block;
+    margin: 15px auto 5px;
+    width: 85%;
+    text-align: center;
+  }
+
+  h1 {
+    margin-top: 10px;
+    font-size: 1.5rem;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .filter-box,
+  .download-box {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .btn {
+    width: 85%;
+    font-size: 1rem;
+    padding: 12px;
+  }
+
+  #attendanceTable {
+    min-width: 100%;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .page-info {
+    font-size: 0.9rem;
+  }
+}
+
